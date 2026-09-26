@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.10)
 
 file(GLOB_RECURSE src_list "${PROJECT_SOURCE_DIR}/nodejieba/lib/*.c*")
 

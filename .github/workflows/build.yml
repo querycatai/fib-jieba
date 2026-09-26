@@ -16,68 +16,70 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
+    # The loong64 images carry their own qemu and the runner cannot point its
+    # binfmt handlers at them, so that job reports without gating.
+    continue-on-error: ${{ startsWith(matrix.arch, 'loong64') }}
 
     strategy:
       matrix:
         include:
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             arch: x64
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             arch: ia32
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             arch: arm64
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             arch: arm
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             arch: mips64
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             arch: ppc64
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             arch: riscv64
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             arch: loong64
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             target: alpine
             arch: x64
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             target: alpine
             arch: ia32
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             target: alpine
             arch: arm64
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             target: android
             arch: x64
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             target: android
             arch: ia32
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             target: android
             arch: arm64
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             target: android
             arch: arm
-          - os: windows-2022
+          - os: windows-latest
             arch: x64
-          - os: windows-2022
+          - os: windows-latest
             arch: ia32
-          - os: windows-2022
+          - os: windows-latest
             arch: arm64
-          - os: macos-14
+          - os: macos-latest
             arch: x64
-          - os: macos-14
+          - os: macos-latest
             arch: arm64
-          - os: macos-14
+          - os: macos-latest
             target: iphone
             arch: arm64
-          - os: macos-14
+          - os: macos-latest
             target: iphone
             arch: x64
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           submodules: "recursive"
 
