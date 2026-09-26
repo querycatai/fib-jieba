@@ -160,6 +160,7 @@ jobs:
         env:
           BUILD_TARGET: ${{ matrix.target }}
           BUILD_ARCH: ${{ matrix.arch }}
+          BUILD_TYPE: ${{ matrix.type }}
 
       - name: Build the project
         shell: bash
@@ -170,12 +171,14 @@ jobs:
           # step below turns the interesting lines into annotations, which can be
           # read through the API.
           bash build -j2 ${BUILD_ARCH} ${BUILD_TARGET} ${BUILD_TYPE} 2>&1 | tee build.log
-          if [[ "$BUILD_TAG" != "" ]]; then
+          # Only a release build is published: a debug artifact carries the name
+          # of the type, so both would end up in the release of a tag.
+          if [[ "$BUILD_TAG" != "" && "$BUILD_TYPE" == "release" ]]; then
             tar -zcf ${BUILD_NAME}-${BUILD_TARGET}-${BUILD_ARCH}-${BUILD_TYPE}.tar.gz addon/${BUILD_NAME}.node
           fi
 
       - name: Release the project
-        if: env.BUILD_TAG != ''
+        if: env.BUILD_TAG != '' && matrix.type == 'release'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
