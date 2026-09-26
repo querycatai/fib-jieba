@@ -98,7 +98,11 @@ jobs:
         shell: bash
         run: |
           set -ev
-          bash build -j2 ${BUILD_ARCH} ${BUILD_TARGET} ${BUILD_TYPE}
+          set -o pipefail
+          # Reading the raw log of a failed job needs authentication; the report
+          # step below turns the interesting lines into annotations, which can be
+          # read through the API.
+          bash build -j2 ${BUILD_ARCH} ${BUILD_TARGET} ${BUILD_TYPE} 2>&1 | tee build.log
           if [[ "$BUILD_TAG" != "" ]]; then
             tar -zcf ${BUILD_NAME}-${BUILD_TARGET}-${BUILD_ARCH}-${BUILD_TYPE}.tar.gz addon/${BUILD_NAME}.node
           fi
@@ -111,3 +115,19 @@ jobs:
           file: ${{ env.BUILD_NAME }}-${{ env.BUILD_TARGET }}-${{ env.BUILD_ARCH }}-${{ env.BUILD_TYPE }}.tar.gz
           tag: ${{ env.BUILD_TAG }}
           overwrite: true
+
+      # The raw log of a failed job needs authentication; these annotations can
+      # be read through the API.
+      - name: Report failure
+        if: failure()
+        shell: bash
+        run: |
+          [ -f build.log ] || exit 0
+          PATTERN='error([ :]| C[0-9]{4})|fatal error|Error [0-9]+$|FAILED|LNK[0-9]{4}|MSB[0-9]{4}|make(\[[0-9]+\])?: \*\*\*'
+          echo "::group::build.log (error lines)"
+          grep -n -E "${PATTERN}" build.log | head -40 || true
+          echo "::endgroup::"
+          { grep -E "${PATTERN}" build.log | head -35 || true; tail -10 build.log; } \
+            | while IFS= read -r line; do
+                [ -n "${line}" ] && echo "::error::${line}"
+              done
