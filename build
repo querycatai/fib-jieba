@@ -1,4 +1,11 @@
 #!/bin/bash
+#
+# The addon repositories are single CMake projects: the entry script of the
+# addon platform (fib-addon) sources the shared build driver, which configures
+# and builds the project of this directory in one pass:
+#
+#   bash build x64 release -j8
 
-. fib-addon/build_tools/scripts/build_env.sh
-. fib-addon/build_tools/scripts/build
+cd "$(dirname "$0")" || exit 1
+
+. fib-addon/scripts/build
