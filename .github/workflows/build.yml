@@ -2,16 +2,20 @@ name: Build/release
 
 on:
   push:
-    # Sequence of patterns matched against refs/heads
+    # Sequence of patterns matched against refs/heads.  master is the branch of
+    # this repository, so a push to it has to build (it did not, the workflow
+    # only listened to dev and main).
     branches:
-      - "dev"
+      - "master"
       - "main"
+      - "dev"
     tags:
       - "*"
   pull_request:
     branches:
-      - "dev"
+      - "master"
       - "main"
+      - "dev"
 
 jobs:
   build:
