@@ -25,61 +25,128 @@ jobs:
     continue-on-error: ${{ startsWith(matrix.arch, 'loong64') }}
 
     strategy:
+      # The grid is the one vender and fibjs build: every platform of
+      # build_tools, in both types.  A failing target must not cancel the
+      # others - a job that dies with its runner would otherwise hide the
+      # result of every other target.
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
             arch: x64
+            type: release
+          - os: ubuntu-latest
+            arch: x64
+            type: debug
           - os: ubuntu-latest
             arch: ia32
+            type: release
+          - os: ubuntu-latest
+            arch: ia32
+            type: debug
           - os: ubuntu-latest
             arch: arm64
+            type: release
+          - os: ubuntu-latest
+            arch: arm64
+            type: debug
           - os: ubuntu-latest
             arch: arm
+            type: release
+          - os: ubuntu-latest
+            arch: arm
+            type: debug
           - os: ubuntu-latest
             arch: mips64
+            type: release
+          - os: ubuntu-latest
+            arch: mips64
+            type: debug
           - os: ubuntu-latest
             arch: ppc64
+            type: release
+          - os: ubuntu-latest
+            arch: ppc64
+            type: debug
           - os: ubuntu-latest
             arch: riscv64
+            type: release
+          - os: ubuntu-latest
+            arch: riscv64
+            type: debug
           - os: ubuntu-latest
             arch: loong64
+            type: release
+          - os: ubuntu-latest
+            arch: loong64
+            type: debug
+          - os: ubuntu-latest
+            arch: loong64ow
+            type: release
+          - os: ubuntu-latest
+            arch: loong64ow
+            type: debug
           - os: ubuntu-latest
             target: alpine
             arch: x64
+            type: release
           - os: ubuntu-latest
             target: alpine
             arch: ia32
+            type: release
           - os: ubuntu-latest
             target: alpine
             arch: arm64
+            type: release
           - os: ubuntu-latest
             target: android
             arch: x64
+            type: release
           - os: ubuntu-latest
             target: android
             arch: ia32
+            type: release
           - os: ubuntu-latest
             target: android
             arch: arm64
+            type: release
           - os: ubuntu-latest
             target: android
             arch: arm
+            type: release
           - os: windows-latest
             arch: x64
+            type: release
           - os: windows-latest
             arch: ia32
+            type: release
           - os: windows-latest
             arch: arm64
+            type: release
           - os: macos-latest
             arch: x64
+            type: release
+          - os: macos-latest
+            arch: x64
+            type: debug
           - os: macos-latest
             arch: arm64
+            type: release
+          - os: macos-latest
+            arch: arm64
+            type: debug
           - os: macos-latest
             target: iphone
             arch: arm64
+            type: release
           - os: macos-latest
-            target: iphone
+            target: iphone-simulator
+            arch: arm64
+            type: release
+          - os: macos-latest
+            target: iphone-simulator
             arch: x64
+            type: release
 
     steps:
       - name: Check out Git repository
